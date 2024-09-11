@@ -1,0 +1,44 @@
+name: Selenium Login Test
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # Define el job llamado "test" que se ejecutará en la última versión de Ubuntu.
+
+    steps:
+    - uses: actions/checkout@v2
+    # Este paso hace un checkout de tu repositorio en el runner.
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    # Configura Python en el runner. Usará la última versión de Python 3.
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install selenium webdriver-manager
+    # Instala las dependencias necesarias: selenium y webdriver-manager.
+
+    - name: Install Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+    # Instala Google Chrome, necesario para Selenium.
+
+    - name: Run Selenium test
+      env:
+        USUARIO: ${{ secrets.CERTIFACT_USUARIO }}
+        NIT: ${{ secrets.CERTIFACT_NIT }}
+        CLAVE: ${{ secrets.CERTIFACT_CLAVE }}
+      run: |
+        python login_test.py
+    # Ejecuta el script de prueba de Selenium.
+    # Las variables de entorno se establecen utilizando secretos de GitHub.

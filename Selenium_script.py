@@ -18,34 +18,34 @@ def setup_driver(headless=True):
     service = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=service, options=chrome_options)
 
-def login_to_certifact(driver, url, usuario, nit, clave):
+def login_certifact(driver, url, usuario, nit, clave):
     driver.get(url)
     print(f"Cargando URL: {url}")
     
     try:
-        # Esperar a que la página se cargue completamente
+        #Esperar a que la página se cargue completamente
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
         
         print(f"Título de la página: {driver.title}")
         
-        # Esperar a que los campos del formulario estén presentes y visibles
+        #Esperar a que los campos del formulario estén presentes y visibles
         usuario_field = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, ":r0:")))
         nit_field = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, ":r1:")))
         clave_field = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, ":r2:")))
         
-        # Limpia campos antes de ingresar los datos
+        #Limpia campos antes de ingresar los datos
         usuario_field.clear()
         nit_field.clear()
         clave_field.clear()
         
-        # Ingresar datos login
+        #Ingresar datos login
         usuario_field.send_keys(usuario)
         nit_field.send_keys(nit)
         clave_field.send_keys(clave)
         
         print("Formulario rellenado. Buscando el botón de inicio de sesión...")
         
-        # Identificar le boton 
+        #Identificar le boton 
         button_locators = [
             (By.XPATH, "//button[contains(text(), 'Iniciar sesión')]"),
             (By.XPATH, "//button[@type='submit']"),
@@ -64,7 +64,7 @@ def login_to_certifact(driver, url, usuario, nit, clave):
         if login_button:
             print("Botón de inicio de sesión encontrado. Intentando hacer clic...")
             
-            # Hacer clic sobre el boton
+            #Hacer clic sobre el boton
             try:
                 login_button.click()
             except:
@@ -75,7 +75,7 @@ def login_to_certifact(driver, url, usuario, nit, clave):
             
             print("Se intentó hacer clic en el botón 'Iniciar sesión'")
             
-            # Esperar al dashboard para confirmar que se logró ingresar 
+            #Esperar al dashboard para confirmar que se logró ingresar 
             try:
                 WebDriverWait(driver, 20).until(lambda d: "dashboard" in d.current_url or len(d.find_elements(By.XPATH, "//div[contains(@class, 'dashboard-item')]")) > 0)
             except:
@@ -83,12 +83,12 @@ def login_to_certifact(driver, url, usuario, nit, clave):
         else:
             print("No se pudo encontrar el botón de inicio de sesión")
         
-        # Verificar si el login fue exitoso
+        #Verificar si el login fue exitoso
         if "dashboard" in driver.current_url:
             print("Login exitoso")
             print(f"URL actual: {driver.current_url}")
             
-            # Intentar encontrar elementos que confirmen el inicio de sesión exitoso
+            #Intentar encontrar elementos que confirmen el inicio de sesión exitoso
             try:
                 username_element = WebDriverWait(driver, 10).until(
                     EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'username')] | //span[contains(@class, 'user-name')]"))
@@ -97,7 +97,7 @@ def login_to_certifact(driver, url, usuario, nit, clave):
             except:
                 print("No se pudo encontrar el elemento con el nombre de usuario")
             
-            # Imprimir los primeros elementos del dashboard
+            #Imprimir los primeros elementos del dashboard
             dashboard_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'dashboard-item')] | //div[contains(@class, 'menu-item')]")
             print("Elementos del dashboard encontrados:")
             for element in dashboard_elements[:5]:  # Imprimir los primeros 5 elementos
@@ -106,14 +106,14 @@ def login_to_certifact(driver, url, usuario, nit, clave):
             print("Login aparentemente fallido")
             print(f"URL actual: {driver.current_url}")
             
-            # Buscar mensajes de error
+            #Buscar mensajes de error
             try:
                 error_message = driver.find_element(By.XPATH, "//div[contains(@class, 'error-message')] | //span[contains(@class, 'error')]")
                 print(f"Mensaje de error encontrado: {error_message.text}")
             except:
                 print("No se encontró un mensaje de error específico")
         
-        # Imprimir el título de la página después del intento de login
+        #Imprimir el título de la página después del intento de login
         print(f"Título de la página después del intento de login: {driver.title}")
         
     except TimeoutException as e:
@@ -124,7 +124,7 @@ def login_to_certifact(driver, url, usuario, nit, clave):
     except Exception as e:
         print(f"Error inesperado: {e}")
     
-    # Imprimir una parte del contenido de la página para depuración
+    #Imprimir una parte del contenido de la página para depuración
     print(f"Fragmento del contenido de la página:\n{driver.page_source[:1000]}...")
 
 def main():
@@ -138,7 +138,7 @@ def main():
     
     driver = setup_driver(headless=True)
     try:
-        login_to_certifact(driver, url, usuario, nit, clave)
+        login_certifact(driver, url, usuario, nit, clave)
     finally:
         driver.quit()
 
